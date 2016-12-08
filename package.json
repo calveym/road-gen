@@ -1,0 +1,19 @@
+{
+  "name": "road-gen",
+  "version": "0.1.0",
+  "description": "This is a simple script that generates a road mesh and texture for a 2d line.",
+  "main": "road-generator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calveym/road-gen.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/calveym/road-gen/issues"
+  },
+  "homepage": "https://github.com/calveym/road-gen#readme"
+}
