@@ -2,7 +2,7 @@
 This is a simple script that generates a road for a 2d line.
 The input should look like this:
 
-```[[x, y], [xn, yx]]```
+```[[x, y], [nx, ny]]```
 
 With as many additional arrays with sets of coordinates as necessary to fully map out the central line.
 With this input, the generator will find the sets of coordinates corresponding to the left and right edges of the road.
