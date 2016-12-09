@@ -4,6 +4,7 @@ function generate (points) {
   road.segments = generateSegments(points);
   road.vertices = generateVertices(road.segments);
   road.triangles = generateTriangles(road.segments);
+  console.log(road);
   return road;
 }
 
@@ -53,7 +54,7 @@ function generateTriangles(segments) {
     for(x = 0; x < oldTriangles.length; x++) {
       newTriangles.push(oldTriangles[x] * (i + 1));
     }
-    triangles.push(newTriangles);
+    triangles = triangles.concat(newTriangles);
   }
   return triangles;
 }
