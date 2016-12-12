@@ -2,6 +2,8 @@ var newRoad;
 var canvas;
 var frame = 0;
 var roadDraw = [];
+var previousPoint;
+var roadLength = 25;
 
 function generate (points) {
   var road = {};
@@ -13,18 +15,16 @@ function generate (points) {
   }, []);
   road.triangles = generateTriangles(road.segments);
   printTriangles(road);
-  return road;
 }
 
 function printTriangles(road) {
   for(i = 0; i < (road.triangles.length); i+=3) {
-    console.log(road.vertices[road.triangles[i]][0] * 20);
-    triangle((road.vertices[road.triangles[i]][0]) * 20,
-             (road.vertices[road.triangles[i]][1]) * 20,
-             (road.vertices[road.triangles[i + 1]][0]) * 20,
-             (road.vertices[road.triangles[i + 1]][1]) * 20,
-             (road.vertices[road.triangles[i + 2]][0]) * 20,
-             (road.vertices[road.triangles[i + 2]][1]) * 20);
+    triangle((road.vertices[road.triangles[i]][0]),
+             (road.vertices[road.triangles[i]][1]),
+             (road.vertices[road.triangles[i + 1]][0]),
+             (road.vertices[road.triangles[i + 1]][1]),
+             (road.vertices[road.triangles[i + 2]][0]),
+             (road.vertices[road.triangles[i + 2]][1]));
   }
 }
 
@@ -46,7 +46,6 @@ function generateSegment(points, i) {
   segment.left = [[points[i][0] + segment.normalLeft[0], points[i][1] + segment.normalLeft[1]], [points[i+1][0] + segment.normalLeft[0], points[i+1][1] + segment.normalLeft[1]]];
   segment.right = [[points[i][0] + segment.normalRight[0], points[i][1] + segment.normalRight[1]], [points[i+1][0] + segment.normalRight[0], points[i+1][1] + segment.normalRight[1]]];
   segment.vertices = segment.left.concat(segment.center.concat(segment.right));
-  console.log(segment.vertices);
   segment.triangles = [2, 0, 1,
                        2, 1, 3,
                        2, 3, 4,
@@ -85,6 +84,27 @@ function generateTriangles(segments) {
   return triangles;
 }
 
+function shortenLineDistance(previousPoint, newPoint, numberOfRoads){
+  numberOfRoads = numberOfRoads || roadLength;
+  var pxDistance = roadLength * numberOfRoads;
+  var fromX = previousPoint[0];
+  var fromY = previousPoint[1];
+  var toX = newPoint[0];
+  var toY = newPoint[1];
+  if(fromX === toX)
+    return {x: toX, y: toY > fromY ? fromY + pxDistance : fromY - pxDistance};
+  if(fromY === toY)
+    return {y: toY, x: toX > fromX ? fromX + pxDistance : fromX - pxDistance};
+  var adjacent   = toY - fromY;
+  var opposite   = toX - fromX;
+  var hypotenuse = Math.sqrt(Math.pow(opposite, 2) + Math.pow(adjacent,2));
+  var angle = Math.acos(adjacent/hypotenuse);
+  var newOpposite = Math.sin(angle) * pxDistance;
+  var newAdjacent = Math.cos(angle) * pxDistance;
+  var y = fromY - newAdjacent;
+  var x = fromX + newOpposite;
+  return [x, y];
+}
 
 
 function setup() {
@@ -92,8 +112,22 @@ function setup() {
 }
 
 function draw() {
-  canvas.clear();
   frame++;
-  roadDraw.push([frame * 2 - 1.9, Math.sin(Math.cos(frame * 0.125)) * 5 + 20]);
-  newRoad = generate(roadDraw);
+  if(mouseIsPressed) {
+    previousPoint = previousPoint || [mouseX, mouseY];
+    var distance = Math.sqrt( (previousPoint[0] - mouseX) * (previousPoint[0] - mouseX) + (previousPoint[1] - mouseY) * (previousPoint[1] - mouseY) );
+    if(distance === roadLength) {
+      roadDraw.push([mouseX, mouseY]);
+    } else if(distance > roadLength) {
+      var remainder = distance % roadLength;
+      var numberOfRoads = distance / roadLength;
+      for(i = 0; i < numberOfRoads; i++) {
+        roadDraw.push([shortenLineDistance(previousPoint, [mouseX, mouseY])[0] + (i * roadLength), shortenLineDistance(previousPoint, [mouseX, mouseY])[1] + (i * roadLength)]);
+      }
+      console.log(roadDraw);
+      previousPoint = ([(previousPoint[0] + (shortenLineDistance(previousPoint, [mouseX, mouseY], numberOfRoads))), (previousPoint[1] + (shortenLineDistance(previousPoint, [mouseX, mouseY], numberOfRoads)))]);
+    }
+  }
+  canvas.clear();
+  generate(roadDraw);
 }
