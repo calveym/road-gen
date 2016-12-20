@@ -15,6 +15,7 @@ With this input, the generator will find the sets of coordinates corresponding t
 
 
 ##TODO:
+- Add mouse interpolation so correct distances are reported regardless of FPS.
 - Implement the ability to smooth the edges and center of the line n amount of times.
 - Implement the ability to add n lanes to the road.
 - Implement the ability to add a customisable central reservation to the road.

@@ -115,6 +115,7 @@ function draw() {
   frame++;
   if(mouseIsPressed) {
     previousPoint = previousPoint || [mouseX, mouseY];
+    console.log(previousPoint);
     var distance = Math.sqrt( (previousPoint[0] - mouseX) * (previousPoint[0] - mouseX) + (previousPoint[1] - mouseY) * (previousPoint[1] - mouseY) );
     if(distance === roadLength) {
       roadDraw.push([mouseX, mouseY]);
